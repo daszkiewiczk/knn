@@ -8,6 +8,17 @@ liczba_kategorii = 0
 WIDTH=600
 HEIGHT=400
 
+def rysuj():
+    canvas.delete("all")  # Wyczyść obszar przed narysowaniem nowych punktów
+    for punkt in dane_uczace:
+        x, y = punkt[0]*WIDTH, punkt[1]*HEIGHT
+        kategoria = punkt[2]
+        rozmiar_punktu = 5
+        kolor_kategorii = ['blue', 'orange', 'yellow', 'purple', 'cyan', 'pink']
+        canvas.create_oval(x - rozmiar_punktu, y - rozmiar_punktu, 
+                            x + rozmiar_punktu, y + rozmiar_punktu, 
+                            fill=kolor_kategorii[kategoria])
+
 # Funkcja do wczytania danych z pliku tekstowego
 def wczytaj_dane():
     nazwa_pliku = filedialog.askopenfilename(filetypes=[("Pliki tekstowe", "*.txt")])
@@ -34,15 +45,7 @@ def wczytaj_dane():
             punkt[1] = (punkt[1] - min_y) / (max_y - min_y)
     print(dane_uczace)
     print(liczba_kategorii)
-    canvas.delete("all")  # Wyczyść obszar przed narysowaniem nowych punktów
-    for punkt in dane_uczace:
-        x, y = punkt[0]*WIDTH, punkt[1]*HEIGHT
-        kategoria = punkt[2]
-        rozmiar_punktu = 5
-        kolor_kategorii = ['blue', 'orange', 'yellow', 'purple', 'cyan', 'pink']
-        canvas.create_oval(x - rozmiar_punktu, y - rozmiar_punktu, 
-                            x + rozmiar_punktu, y + rozmiar_punktu, 
-                            fill=kolor_kategorii[kategoria])
+    rysuj()
 
 # Obliczanie odległości między punktami
 def odleglosc(punkt1, punkt2, metryka='euklidesowa'):
@@ -80,6 +83,7 @@ def klasyfikuj_punkt(event, rodzaj_glosowania='proste', k=3):
     kategoria_wybrana = licznik.index(max(licznik))
     
     # Wizualizacja klasyfikacji i wyróżnienie sąsiadów
+    rysuj()
     canvas.delete("neighbors")  # Usuń poprzednie wyróżnienia sąsiadów
     for indeks, _ in k_najblizsze:
         punkt_uczacy = dane_uczace[indeks]
