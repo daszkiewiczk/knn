@@ -55,6 +55,7 @@ def odleglosc(punkt1, punkt2, metryka='euklidesowa'):
 
 # Funkcja do klasyfikacji punktu
 def klasyfikuj_punkt(event, rodzaj_glosowania='proste', k=3):
+    global odleglosc
     x, y = event.x, event.y
     punkt = (x, y)
     # Znajdź k najbliższych sąsiadów i dokonaj klasyfikacji
@@ -78,7 +79,8 @@ def klasyfikuj_punkt(event, rodzaj_glosowania='proste', k=3):
     # Znajdź kategorię z największą liczbą głosów
     kategoria_wybrana = licznik.index(max(licznik))
     
-    # Wizualizacja klasyfikacji
+    # Wizualizacja klasyfikacji i wyróżnienie sąsiadów
+    canvas.delete("neighbors")  # Usuń poprzednie wyróżnienia sąsiadów
     for indeks, _ in k_najblizsze:
         punkt_uczacy = dane_uczace[indeks]
         x_uczacy, y_uczacy = punkt_uczacy[0], punkt_uczacy[1]
@@ -94,12 +96,18 @@ def klasyfikuj_punkt(event, rodzaj_glosowania='proste', k=3):
                                     x + rozmiar_kwadratu, y + rozmiar_kwadratu, 
                                     outline=kolor)
         
-        # Rysowanie punktów uczących
-        rozmiar_punktu = 5
-        kolor_kategorii = ['blue', 'orange', 'yellow', 'purple', 'cyan', 'pink']
-        canvas.create_oval(x_uczacy - rozmiar_punktu, y_uczacy - rozmiar_punktu, 
-                           x_uczacy + rozmiar_punktu, y_uczacy + rozmiar_punktu, 
-                           fill=kolor_kategorii[punkt_uczacy[2]])
+        # Wyróżnienie sąsiadów
+        rozmiar_okregu = 5
+        canvas.create_oval(x_uczacy - rozmiar_okregu, y_uczacy - rozmiar_okregu, 
+                           x_uczacy + rozmiar_okregu, y_uczacy + rozmiar_okregu, 
+                           outline='black', width=2, tags="neighbors")
+    
+    # Wizualizacja klasyfikacji klikniętego punktu
+    rozmiar_okregu = 7
+    canvas.create_oval(x - rozmiar_okregu, y - rozmiar_okregu, 
+                       x + rozmiar_okregu, y + rozmiar_okregu, 
+                       outline='black', width=2)
+    canvas.create_text(x, y, text=str(kategoria_wybrana), fill='black', tags="neighbors")
 
 # Tworzenie GUI
 root = tk.Tk()
