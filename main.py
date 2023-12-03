@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import ttk
 import csv
 import math
 
@@ -49,6 +50,8 @@ def wczytaj_dane():
 
 # Obliczanie odległości między punktami
 def odleglosc(punkt1, punkt2, metryka='euklidesowa'):
+    metryka = metryka_combobox.get()
+    print(metryka)
     if metryka == 'euklidesowa':
         return math.sqrt((punkt1[0] - punkt2[0])**2 + (punkt1[1] - punkt2[1])**2)
     elif metryka == 'miejska':
@@ -58,6 +61,11 @@ def odleglosc(punkt1, punkt2, metryka='euklidesowa'):
 
 # Funkcja do klasyfikacji punktu
 def klasyfikuj_punkt(event, rodzaj_glosowania='proste', k=3):
+    rodzaj_glosowania = rodzaj_glosowania_combobox.get()
+    k = int(liczba_sasiadow.get())
+    print(rodzaj_glosowania, k)
+
+
     global odleglosc
     x, y = event.x/WIDTH, event.y/HEIGHT
     punkt = (x, y)
@@ -76,9 +84,9 @@ def klasyfikuj_punkt(event, rodzaj_glosowania='proste', k=3):
             kategoria = dane_uczace[indeks][2]
             licznik[kategoria] += 1
     elif rodzaj_glosowania == 'wazone':
-        for indeks, odleglosc in k_najblizsze:
+        for indeks, odleglosc1 in k_najblizsze:
             kategoria = dane_uczace[indeks][2]
-            licznik[kategoria] += 1 / (odleglosc ** 2)
+            licznik[kategoria] += 1 / (odleglosc1 ** 2)
     print(licznik)
     
     # Znajdź kategorię z największą liczbą głosów
@@ -122,7 +130,31 @@ root.title("K-Najbliżsi Sąsiedzi")
 
 # Przycisk do wczytania danych
 btn_wczytaj = tk.Button(root, text="Wczytaj dane", command=wczytaj_dane)
+
+# Combobox creation 
+rodzaj_glosowania = tk.StringVar() 
+rodzaj_glosowania_combobox = ttk.Combobox(root, width = 27, textvariable = rodzaj_glosowania) 
+metryka = tk.StringVar() 
+metryka_combobox = ttk.Combobox(root, width = 27, textvariable = metryka) 
+liczba_sasiadow = tk.Spinbox(root, from_=1, to=20, width=27)  
+liczba_sasiadow.delete(0, "end")
+liczba_sasiadow.insert(0, "3")
+# Adding combobox drop down list 
+rodzaj_glosowania_combobox['values'] = (
+    'proste',
+    'wazone',
+) 
+rodzaj_glosowania_combobox.current(0)
+metryka_combobox['values'] = (
+    'euklidesowa',
+    'miejska',
+)
+metryka_combobox.current(0)
+
 btn_wczytaj.pack()
+rodzaj_glosowania_combobox.pack()
+metryka_combobox.pack()
+liczba_sasiadow.pack()
 
 # Obszar wyświetlający punkty
 canvas = tk.Canvas(root, width=WIDTH, height=HEIGHT, bg='white')
