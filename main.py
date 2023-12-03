@@ -5,8 +5,8 @@ import math
 
 dane_uczace = []
 liczba_kategorii = 0
-WIDTH=600
-HEIGHT=400
+WIDTH=1280
+HEIGHT=640
 
 def rysuj():
     canvas.delete("all")  # Wyczyść obszar przed narysowaniem nowych punktów
@@ -59,8 +59,9 @@ def odleglosc(punkt1, punkt2, metryka='euklidesowa'):
 # Funkcja do klasyfikacji punktu
 def klasyfikuj_punkt(event, rodzaj_glosowania='proste', k=3):
     global odleglosc
-    x, y = event.x, event.y
+    x, y = event.x/WIDTH, event.y/HEIGHT
     punkt = (x, y)
+    print(punkt)
     # Znajdź k najbliższych sąsiadów i dokonaj klasyfikacji
     odleglosci = []
     for i, obserwacja in enumerate(dane_uczace):
@@ -78,9 +79,11 @@ def klasyfikuj_punkt(event, rodzaj_glosowania='proste', k=3):
         for indeks, odleglosc in k_najblizsze:
             kategoria = dane_uczace[indeks][2]
             licznik[kategoria] += 1 / (odleglosc ** 2)
+    print(licznik)
     
     # Znajdź kategorię z największą liczbą głosów
     kategoria_wybrana = licznik.index(max(licznik))
+    print(kategoria_wybrana)
     
     # Wizualizacja klasyfikacji i wyróżnienie sąsiadów
     rysuj()
@@ -96,22 +99,22 @@ def klasyfikuj_punkt(event, rodzaj_glosowania='proste', k=3):
             
             # Rysowanie kwadratu wokół klikniętego punktu
             rozmiar_kwadratu = 10
-            canvas.create_rectangle(x - rozmiar_kwadratu, y - rozmiar_kwadratu, 
-                                    x + rozmiar_kwadratu, y + rozmiar_kwadratu, 
+            canvas.create_rectangle(x*WIDTH - rozmiar_kwadratu, y*HEIGHT - rozmiar_kwadratu, 
+                                    x*WIDTH + rozmiar_kwadratu, y*HEIGHT + rozmiar_kwadratu, 
                                     outline=kolor)
         
         # Wyróżnienie sąsiadów
         rozmiar_okregu = 5
-        canvas.create_oval(x_uczacy - rozmiar_okregu, y_uczacy - rozmiar_okregu, 
-                           x_uczacy + rozmiar_okregu, y_uczacy + rozmiar_okregu, 
-                           outline='black', width=2, tags="neighbors")
+        canvas.create_oval(x_uczacy*WIDTH - rozmiar_okregu, y_uczacy*HEIGHT - rozmiar_okregu, 
+                           x_uczacy*WIDTH + rozmiar_okregu, y_uczacy*HEIGHT + rozmiar_okregu, 
+                           outline='black', width=4, tags="neighbors")
     
     # Wizualizacja klasyfikacji klikniętego punktu
     rozmiar_okregu = 7
-    canvas.create_oval(x - rozmiar_okregu, y - rozmiar_okregu, 
-                       x + rozmiar_okregu, y + rozmiar_okregu, 
+    canvas.create_oval(x*WIDTH - rozmiar_okregu, y*HEIGHT - rozmiar_okregu, 
+                       x*WIDTH + rozmiar_okregu, y*HEIGHT + rozmiar_okregu, 
                        outline='black', width=2)
-    canvas.create_text(x, y, text=str(kategoria_wybrana), fill='black', tags="neighbors")
+    canvas.create_text(x*WIDTH, y*HEIGHT, text=str(kategoria_wybrana), fill='black', tags="neighbors")
 
 # Tworzenie GUI
 root = tk.Tk()
